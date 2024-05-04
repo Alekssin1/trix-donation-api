@@ -18,7 +18,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'surname', 'contact_number', 'avatar']
+        fields = ['name', 'surname', 'avatar']
 
 
 class EmailSerializer(serializers.Serializer):
@@ -27,8 +27,11 @@ class EmailSerializer(serializers.Serializer):
 
 
 class PasswordCodeValidateSerializer(serializers.Serializer):
-
     email = serializers.EmailField()
     code = serializers.IntegerField()
 
+
+class PasswordSetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(max_length=50)
 

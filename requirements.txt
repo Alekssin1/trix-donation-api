@@ -19,7 +19,8 @@ gprof2dot==2022.7.29
 kombu==5.3.7
 pillow==10.3.0
 prompt-toolkit==3.0.43
-psycopg2==2.9.9
+# psycopg2==2.9.9
+psycopg2-binary
 pycodestyle==2.11.1
 PyJWT==2.8.0
 python-dateutil==2.9.0.post0
@@ -33,3 +34,4 @@ typing_extensions==4.11.0
 tzdata==2024.1
 vine==5.1.0
 wcwidth==0.2.13
+celery==5.4.0

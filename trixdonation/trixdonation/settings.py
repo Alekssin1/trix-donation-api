@@ -210,5 +210,10 @@ CACHES = {
     }
 }
 
+CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+CELERY_TIMEZONE = "Europe/Kyiv"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 HOST = "http://127.0.0.1"
 PORT = 8000

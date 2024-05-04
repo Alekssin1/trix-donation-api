@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from helper.image_converter import convert_image_to_webp
@@ -76,6 +78,12 @@ class User(AbstractBaseUser):
         return True
     
     def save(self, *args, **kwargs):
-        if self.avatar:
+        if self.avatar:   
+            old_user = User.objects.get(pk=self.pk)
+            if old_user.avatar:  
+                old_avatar_path = os.path.join(settings.MEDIA_ROOT, str(old_user.avatar))
+                if os.path.exists(old_avatar_path):
+                    os.remove(old_avatar_path)
+                self.avatar.name = os.path.basename(old_user.avatar.name)
             self.avatar = convert_image_to_webp(self.avatar)
         super().save(*args, **kwargs)
