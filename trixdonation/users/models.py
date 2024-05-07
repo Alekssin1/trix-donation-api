@@ -2,7 +2,6 @@ import os
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
-from helper.image_converter import convert_image_to_webp
 
 
 class UserManager(BaseUserManager):
@@ -53,6 +52,9 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
 
+    MAXIMUM_RECLINED_REQUESTS = 5
+    REMOVE_UNACTIVE_USER_DAYS_AFTER = 5
+
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255, null=True)
     surname = models.CharField(max_length=255, null=True)
@@ -64,6 +66,8 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False)  
 
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True) 
+    blocked = models.BooleanField(default=False, null=True, blank=True)
+    declined_request_counter = models.IntegerField(default=0, null=True, blank=True)
 
     USERNAME_FIELD = "email"
     objects = UserManager()
@@ -78,7 +82,11 @@ class User(AbstractBaseUser):
         return True
     
     def save(self, *args, **kwargs):
-        if self.avatar:   
+
+        from helper.image_converter import convert_image_to_webp
+
+
+        if self.avatar and self.pk:  
             old_user = User.objects.get(pk=self.pk)
             if old_user.avatar:  
                 old_avatar_path = os.path.join(settings.MEDIA_ROOT, str(old_user.avatar))
@@ -87,3 +95,6 @@ class User(AbstractBaseUser):
                 self.avatar.name = os.path.basename(old_user.avatar.name)
             self.avatar = convert_image_to_webp(self.avatar)
         super().save(*args, **kwargs)
+
+
+        

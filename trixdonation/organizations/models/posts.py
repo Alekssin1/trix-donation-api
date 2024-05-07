@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.db import models
 from helper.image_converter import convert_image_to_webp
 from organizations.models.oranizations import Organization
@@ -6,9 +8,16 @@ class PostImage(models.Model):
     file = models.ImageField(upload_to='posts/images/')
 
     def save(self, *args, **kwargs):
+        old_file_path = ''
         if self.file:
+            old_file_path = os.path.join(settings.MEDIA_ROOT, str(self.file))
             self.file = convert_image_to_webp(self.file)
         super().save(*args, **kwargs)
+        if old_file_path and not old_file_path.endswith('.webp'):
+            try:
+                os.remove(old_file_path)
+            except FileNotFoundError:
+                pass
 
 
 class PostVideo(models.Model):

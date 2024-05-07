@@ -1,5 +1,6 @@
+import os
+from django.conf import settings
 from django.db import models
-from helper.image_converter import convert_image_to_webp
 
 
 class MoneyCollection(models.Model):
@@ -17,6 +18,8 @@ class MoneyCollection(models.Model):
         return f"Збір: {self.goal_title}"
 
     def save(self, *args, **kwargs):
+        from helper.image_converter import convert_image_to_webp
+        
         if self.preview:
             self.preview = convert_image_to_webp(self.preview)
 

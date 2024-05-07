@@ -1,13 +1,25 @@
 import os
 from faker import Faker
 from django.core.management.base import BaseCommand
-from organizations.models import Organization, Post, PostImage, PostVideo
+from organizations.models import Organization, Post, PostImage, PostVideo, OrganizationSubscription
 from users.models import User
 
 fake = Faker()
 
+def generate_fake_subscriptions(organization):
+    users = User.objects.all()
+    for _ in range(fake.random_int(min=0, max=3)):
+        user = fake.random_element(users)
+        if not OrganizationSubscription.objects.filter(user=user, organization=organization).exists():
+            subscription = OrganizationSubscription(user=user, organization=organization)
+            try:
+                subscription.save()
+            except:
+                pass
+
 class Command(BaseCommand):
     help = 'Seed the database with fake organizations and posts'
+    
 
     def handle(self, *args, **kwargs):
         self.stdout.write("Seeding the database with fake organizations and posts...")
@@ -49,9 +61,13 @@ class Command(BaseCommand):
             organization = Organization(**organization_data)
             avatar_path = os.path.join(avatar_directory, avatar_filename)
             organization.avatar.save(avatar_filename, open(avatar_path, 'rb'), save=True)
+            organization.save()
+            organization.created_by = staff_users[0]
             for user in staff_users:
                 organization.staff.add(user) 
-            organization.save()
+            
+
+            generate_fake_subscriptions(organization) 
 
 
            # Create fake posts for the organization

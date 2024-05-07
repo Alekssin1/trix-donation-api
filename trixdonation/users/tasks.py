@@ -1,9 +1,14 @@
+import os
 from celery import shared_task
 from .services import handle_user
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 import logging
+
+from django.utils import timezone
+
+from users.models import User
+
 logger = logging.getLogger("Email")
+logger2 = logging.getLogger("remove_old_not_activated_users")
 
 
 @shared_task
@@ -15,20 +20,29 @@ def send_password_recovery_email(email, name, surname, code):
 def send_email_verification_email(email, code):
     handle_user.handle_send_email_verify(email, code)
 
-# def handle_send_email_verify(email, code):
-    # context = {
-    #     "code": code,
-    #     "page": "email_confirmation"
-    # }
+@shared_task
+def remove_old_image(old_avatar_path):
+    if old_avatar_path and not old_avatar_path.endswith('.webp'):
+        try:
+            os.remove(old_avatar_path)
+        except FileNotFoundError:
+            pass
 
-    # template = render_to_string(
-    #     "email_code_send.html", context)
 
-    # send_mail(
-    #     "Підтвердження електронної адреси",
-    #     "",
-    #     "gamesdistributoragency@gmail.com",
-    #     [email],
-    #     fail_silently=False,
-    #     html_message=template
-    # )
+@shared_task
+def remove_old_not_activated_users():
+    """ tasks runs every day at 11:30 pm """
+
+    logger2.info("remove_old_not_activated_users start")
+    
+    delete_after_date = timezone.now() - timezone.timedelta(days=User.REMOVE_UNACTIVE_USER_DAYS_AFTER)
+    
+    unactive_users = User.objects.filter(is_active=False, registration_date__lte=delete_after_date)
+
+    logger.info(f"declined_requests count = {unactive_users.count()}")
+
+    unactive_users.delete()
+
+    logger.info("remove_old_not_activated_users end")
+
+

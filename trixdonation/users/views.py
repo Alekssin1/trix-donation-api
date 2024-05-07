@@ -82,7 +82,7 @@ class AccessRecovery(APIView):
                     'refresh_token': str(refresh),
                 }, status=status.HTTP_200_OK)
             except:
-                return Response({'detail': 'Refresh token вказано з помилкою або він застарілий'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'detail': 'Refresh token вказано з помилкою або він застарілий', 'expired': 'true'}, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
             return Response({'detail': 'Refresh token не введено.'},
@@ -121,10 +121,6 @@ class EmailConfirmationSendCodeView(APIView):
             code = randint(100000, 999999)
             redis_con.set(serializer.data['email'], code, "300")
 
-            # handle_user.handle_send_email_verify(
-            #     serializer.data['email'],
-            #     code
-            # )
             send_email_verification_email.s(
                 serializer.data['email'],
                 code
@@ -150,18 +146,12 @@ class PasswordResetApiView(APIView):
 
             code = randint(100000, 999999)
             redis_con.set(serializer.data['email'], code, "300")
-            handle_user.handle_send_password_recovery(
+            send_password_recovery_email.s(
                 serializer.data['email'],
                 user.name if user.name else "",
                 user.surname if user.surname else "",
                 code
-            )
-            # send_password_recovery_email.delay(
-            #     serializer.data['email'],
-            #     user.name if user.name else "",
-            #     user.surname if user.surname else "",
-            #     code
-            # )
+            ).apply_async()
 
             return Response("Okay", status=status.HTTP_200_OK)
 

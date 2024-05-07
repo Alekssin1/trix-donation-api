@@ -15,6 +15,8 @@ class UserAdmin(BaseUserAdmin):
                 "fields": ("name",
                            "surname",
                            "avatar",
+                           "blocked",
+                           "declined_request_counter",
                            )
             },
         ),

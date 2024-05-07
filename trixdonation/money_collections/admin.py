@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import MoneyCollection, Report, ReportImage, ReportVideo, MoneyCollectionRequisites, OtherRequisite, BankCard
+from .models import MoneyCollection, Report, ReportImage, ReportVideo, MoneyCollectionRequisites, OtherRequisite, BankCard, MoneyCollectionSubscription
 
 
 admin.site.register(MoneyCollection)
@@ -10,3 +10,4 @@ admin.site.register(ReportVideo)
 admin.site.register(MoneyCollectionRequisites)
 admin.site.register(OtherRequisite)
 admin.site.register(BankCard)
+admin.site.register(MoneyCollectionSubscription)

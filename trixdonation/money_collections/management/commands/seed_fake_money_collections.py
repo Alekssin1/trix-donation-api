@@ -3,12 +3,12 @@ import random
 import string
 from faker import Faker
 from django.core.management.base import BaseCommand
-from money_collections.models import MoneyCollection, MoneyCollectionRequisites, Report, ReportImage, ReportVideo, Subscription
+from money_collections.models import MoneyCollection, MoneyCollectionRequisites, Report, ReportImage, ReportVideo, MoneyCollectionSubscription
 from organizations.models import Organization
 from users.models import User
 from money_collections.models.bank_card import BankCard
 from money_collections.models.other_requisite import OtherRequisite
-
+ 
 fake = Faker()
 
 def generate_random_string(length):
@@ -21,10 +21,15 @@ def generate_random_credit_card():
 
 def generate_fake_subscriptions(money_collection):
     users = User.objects.all()
+    
     for _ in range(fake.random_int(min=0, max=3)):
         user = fake.random_element(users)
-        subscription = Subscription(user=user, money_collection=money_collection)
-        subscription.save()
+        if not MoneyCollectionSubscription.objects.filter(user=user, money_collection=money_collection).exists():
+            subscription = MoneyCollectionSubscription(user=user, money_collection=money_collection)
+            try:
+                subscription.save()
+            except:
+                pass
 
 
 class Command(BaseCommand):
