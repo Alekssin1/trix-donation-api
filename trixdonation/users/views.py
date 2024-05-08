@@ -3,7 +3,8 @@ import redis
 from rest_framework import status
 from rest_framework.generics import (
     CreateAPIView,
-    RetrieveUpdateAPIView
+    RetrieveUpdateAPIView,
+    RetrieveAPIView
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
@@ -14,7 +15,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
 from .serializers import UserCreateSerializer, EmailSerializer, \
-    PasswordCodeValidateSerializer, UserUpdateSerializer, PasswordSetSerializer
+    PasswordCodeValidateSerializer, UserUpdateSerializer, PasswordSetSerializer, UserGetSerializer
 
 from .services import handle_user
 from .tasks import send_password_recovery_email, send_email_verification_email
@@ -31,6 +32,14 @@ class UserCreateAPIView(CreateAPIView):
         user = serializer.save()
         user.is_active = False 
         user.save()
+
+
+class UserRetrieveAPIView(RetrieveAPIView):
+    serializer_class = UserGetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return User.objects.get(id=self.request.user.id)
 
 
 class UserLoginAPIView(TokenObtainPairView):

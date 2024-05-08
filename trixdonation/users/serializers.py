@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import User
 
 
+class UserGetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        exclude = ('password', 'is_active', 'is_staff')
+
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 

@@ -1,7 +1,7 @@
 import os
 from faker import Faker
 from django.core.management.base import BaseCommand
-from organizations.models import Organization, Post, PostImage, PostVideo, OrganizationSubscription
+from organizations.models import Organization, Post, PostImage, PostVideo, OrganizationSubscription, OrganizationStaff
 from users.models import User
 
 fake = Faker()
@@ -43,10 +43,10 @@ class Command(BaseCommand):
         for _ in range(15):
             foundation = fake.boolean()
             if foundation:
-                staff_users = fake_users.filter(organizations__isnull=True)[:fake.random_int(min=1, max=3)] 
+                staff_users = fake_users.filter(organization_user__isnull=True)[:fake.random_int(min=1, max=3)] 
                 name = fake.company()
             else:
-                staff_users = fake_users.filter(organizations__isnull=True)[:1]  
+                staff_users = fake_users.filter(organization_user__isnull=True)[:1]  
                 name = f"{staff_users[0].name} {staff_users[0].surname}"
             avatar_filename = min(avatar_usage_count, key=avatar_usage_count.get)
             avatar_usage_count[avatar_filename] += 1
@@ -57,14 +57,18 @@ class Command(BaseCommand):
                 'facebook': 'https://www.facebook.com/serhiyprytula/' if fake.boolean() else None,
                 'customURL': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' if fake.boolean() else None,
                 'foundation': foundation,
+                'created_by': staff_users[0],
             }
             organization = Organization(**organization_data)
             avatar_path = os.path.join(avatar_directory, avatar_filename)
             organization.avatar.save(avatar_filename, open(avatar_path, 'rb'), save=True)
             organization.save()
-            organization.created_by = staff_users[0]
             for user in staff_users:
-                organization.staff.add(user) 
+                OrganizationStaff.objects.create(
+                    organization=organization,
+                    user=user,
+                    status=OrganizationStaff.APPROVED
+                )
             
 
             generate_fake_subscriptions(organization) 

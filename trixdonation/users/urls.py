@@ -1,12 +1,13 @@
 from django.urls import path
 from .views import AccessRecovery, UserCreateAPIView, UserLoginAPIView, CodeValidateApiView, EmailConfirmationSendCodeView,\
-PasswordResetApiView, PasswordSetApiView, UserUpdateAPIView, CreateStaffUserAPIView
+PasswordResetApiView, PasswordSetApiView, UserUpdateAPIView, CreateStaffUserAPIView, UserRetrieveAPIView
 
 urlpatterns = [
     path(r'login/', UserLoginAPIView.as_view(), name='user-login'),
     path(r'access_token_recovery/', AccessRecovery.as_view(), name='access-token-recovery'),
     path(r'create/', UserCreateAPIView.as_view(), name='user-create'),
     path(r'create_staff/', CreateStaffUserAPIView.as_view(), name='create-staff-user'),
+    path(r'profile/', UserRetrieveAPIView.as_view(), name='user-profile'),
     path(r'edit/', UserUpdateAPIView.as_view(), name='user-edit'),
     path(r'password_reset/', PasswordResetApiView.as_view(),
          name="password_reset"),

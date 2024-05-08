@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заява на створення</title>
+
+    <style>
+        body {
+            font-family: "Montserrat", sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+        .header h1 {
+            color: #007bff;
+            margin: 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffb300;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #cccccc;
+            border-radius: 0 0 10px 10px;
+        }
+        .content p{
+            color: #000!important;
+        }
+    </style>
+</head>
+<body>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse">
+        <tr>
+            <td align="center" style="padding: 40px 20px; background: linear-gradient(to right, #FFD54F, #FFA500);">
+                <img src="https://previews.jumpshare.com/thumb/815bc01b796dd6f1733c957c5af1949322745225e342e9d044e1e28fc6627b2e0f077152858a15ff21d1d78c5ac02f819eafc7fee7e2659a8db3470b077af7d7dfc2b04ba47074187d53ab12054c2e75" alt="Logo" style="display: block; width: 100px; height: auto; margin-right: 20px;">
+                <h1 style="color: #333333">Заява на створення {% if foundation == True %}фонду{% else %}волонтерської організації{% endif %}</h1>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="padding: 40px 30px">
+                <div class="content">
+                    <p>Привіт, {{ name }} {{ surname }}!</p>
+                    <p>Ваш запит на створення {% if foundation == True %}фонду{% else %}волонтерської організації{% endif %} {{ organization_name }} на платформі Trix Donation було розглянуто.</p>
+                    <p>
+                        <span class="code" style="display: block; margin: 0 auto;">
+                            {% if status == "a" %}
+                            Запит на створення {% if foundation == True %}фонду{% else %}волонтерської організації{% endif %} було затверджено.
+                            {% elif status == "d" %}
+                                Запит на створення {% if foundation == True %}фонду{% else %}волонтерської організації{% endif %} було відхилено.
+                            {% endif %}
+                        </span>
+                    </p>
+                    {% if status == "d" %}
+                    <p>
+                        Якщо ви вважаєте, що сталася помилка, ви можете змінити свій запит протягом 5 днів. 
+                        Також ви можете звернутися в нашу підтримку за адресою gamesdistributoragency@gmail.com.
+                    </p>
+                    {% endif %}
+                    <p>З повагою,</p>
+                    <p>Команда Trix</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#333333" style="padding: 20px; text-align: center">
+                <div class="footer">
+                    &copy; 2024 Trix Donation Platform. Всі права захищені.
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

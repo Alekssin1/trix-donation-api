@@ -144,6 +144,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+BASE_URLS = {
+    'development': 'http://127.0.0.1:8000',
+    'production': 'http://3.71.89.121',
+}
+
+ENVIRONMENT = 'development'  
+
+BASE_URL = BASE_URLS[ENVIRONMENT]
 
 
 # Default primary key field type

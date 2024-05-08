@@ -21,7 +21,7 @@ class MoneyCollectionRequisites(models.Model):
 
     def save(self, *args, **kwargs):
         MONOBANK_JAR_LINK_PATTERN = r'^https://send\.monobank\.ua/jar/[a-zA-Z0-9]{10}(\?fbclid=[a-zA-Z0-9_-]+)?$'
-        if not bool(re.match(MONOBANK_JAR_LINK_PATTERN, self.monobank_jar_link)):
+        if not re.match(MONOBANK_JAR_LINK_PATTERN, self.monobank_jar_link):
             raise ValidationError('Схоже вказане посилання на банку є некоректним. Будь ласка, переконайтесь, що введене посилання правильне.')
         
         if self.monobank_jar_number:
