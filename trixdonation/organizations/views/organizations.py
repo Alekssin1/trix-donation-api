@@ -228,6 +228,9 @@ class ManageOrganizationStaffView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
+        if not Organization.objects.filter(pk=pk, created_by=request.user).exists():
+            return Response({'detail': 'Ви не можете переглядати персонал інших фондів.'}, status=status.HTTP_403_FORBIDDEN)
+        
         queryset = OrganizationStaff.objects.filter(organization_id=pk).select_related('user')
         seriaizer = OrganizationStaffSerializer(queryset, many=True)
         return Response(seriaizer.data)
@@ -255,6 +258,9 @@ class ManageOrganizationStaffView(APIView):
             existing_request = OrganizationStaff.objects.filter(organization=organization, user=user).exists()
             if existing_request:
                 return Response({'detail': 'Ви вже запросили цього користувача до себе в команду.'}, status=status.HTTP_400_BAD_REQUEST)
+            foundation_owner = OrganizationStaff.objects.filter(organization__foundation=True, organization__created_by=user).exists()
+            if foundation_owner:
+                return Response({'detail': 'Користувач якого ви намагаєтесь запросити також є власником фонду.'}, status=status.HTTP_400_BAD_REQUEST)
 
             OrganizationStaff.objects.create(
                 organization=organization,
@@ -268,6 +274,16 @@ class ManageOrganizationStaffView(APIView):
                 user.surname,
             ).apply_async()
         elif action == 'remove':
+            org_with_user_as_creator = Organization.objects.filter(created_by=user).exists()
+            if org_with_user_as_creator:
+                # Якщо користувач створив якусь організацію, додаємо його в цю організацію як staff зі статусом "a"
+                organization = Organization.objects.get(created_by=user)
+                OrganizationStaff.objects.create(
+                    organization=organization,
+                    user=user,
+                    status='a'
+                )
+            # Видаляємо користувача з поточної організації
             OrganizationStaff.objects.filter(
                 organization=organization,
                 user=user
@@ -290,3 +306,13 @@ class ApproveDeclineOrganizationStaffView(APIView):
 
         except:
             return Response({'detail': 'Персоналу з таким id не існує в організації.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class OrganizationRetrieveView(RetrieveAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = OrganizationSerializer
+    queryset = Organization.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

@@ -61,12 +61,16 @@
                 <div class="content">
                     <p>Привіт, {{ name }} {{ surname }}!</p>
                     <p>Тебе запрошено бути персоналом у фонді {{ foundation_name }} на платформі Trix Donation.</p>
-                        <div style="display: flex; flex-direction: row;">
-                            <a href="{{ BASE_URL }}{%url 'approve-decline-organization-staff' pk 'a' %}" style="margin-right: 10px; width:40%;">
-                                <button style="padding: 30px 20px; background-color: #4CAF50; color: white; border: none; border-radius:20px; cursor: pointer;">Прийняти</button>
+                        <div style="display:flex; flex-direction:column; content-align:center; width: 100%;">
+                            <a href="{{ BASE_URL }}{%url 'approve-decline-organization-staff' pk 'a' %}" style="width: 100%;">
+                                <button style="padding: 30px 20px; background-color: #FFD54F; color: #131313; border: none; border-radius: 20px; width: 100%;">
+                                    Прийняти
+                                </button>
                             </a>
-                            <a href="{{ BASE_URL }}{%url 'approve-decline-organization-staff' pk 'd' %}">
-                                <button style="padding: 30px 20px; background-color: #008CBA; color: white; border: none; border-radius:20px; cursor: pointer;">Відхилити</button>
+                            <a href="{{ BASE_URL }}{%url 'approve-decline-organization-staff' pk 'd' %}" style="width: 100%;">
+                                <button style="padding: 30px 20px; background-color: #131313; color: #FFD54F; border: none; border-radius: 20px; width: 100%;">
+                                    Відхилити
+                                </button>
                             </a>
                         </div>
                     <p>З повагою,</p>
