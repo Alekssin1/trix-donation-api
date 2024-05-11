@@ -4,8 +4,13 @@ import xml.etree.ElementTree as ET
 from organizations.models.oranizations import OrganizationRequest
 
 def validate_egrpou(egrpou_code):
-    response = requests.get(f"https://adm.tools/action/gov/api/?egrpou={egrpou_code}")
-    root = ET.fromstring(response.content)
+    url = f"https://adm.tools/action/gov/api/?egrpou={egrpou_code}"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+    
+    response = requests.get(url, headers=headers)
+    print(response)
+    root = ET.fromstring(response.text)
+    print(response.text)
     if root:
         name_short = root.find(".//company").get("name_short")
         if not name_short.startswith("БО"):

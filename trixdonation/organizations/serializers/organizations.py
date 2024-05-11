@@ -63,7 +63,7 @@ class StaffOrganizationRequestUpdateSerializer(serializers.ModelSerializer):
 class OrganizationSerializerIds(serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ['organization_id']
+        fields = ['organization_id', 'name']
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:

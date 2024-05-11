@@ -20,8 +20,8 @@ class MoneyCollectionInfoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def to_representation(self, instance):
-        # Optimizing to_representation method to prefetch related data in a single query
         instance = MoneyCollection.objects.select_related('requisites').prefetch_related('organizations').get(pk=instance.pk)
+        print(instance)
         return super().to_representation(instance)
     
 
