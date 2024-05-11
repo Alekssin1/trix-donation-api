@@ -56,10 +56,10 @@ class Command(BaseCommand):
                 'goal_title': fake.sentence(),
                 'description': fake.paragraph(),
                 'active': fake.boolean(),
-                'collected_amount_on_jar': fake.pydecimal(left_digits=4, right_digits=2),
-                'collected_amount_on_platform': fake.pydecimal(left_digits=4, right_digits=2),
-                'collected_amount_from_other_requisites': fake.pydecimal(left_digits=4, right_digits=2),
-                "goal_amount": fake.pydecimal(left_digits=8, right_digits=2),
+                'collected_amount_on_jar': fake.pydecimal(left_digits=4, right_digits=2, positive=True),
+                'collected_amount_on_platform': fake.pydecimal(left_digits=4, right_digits=2, positive=True),
+                'collected_amount_from_other_requisites': fake.pydecimal(left_digits=4, right_digits=2, positive=True),
+                "goal_amount": fake.pydecimal(left_digits=8, right_digits=2, positive=True)
             }
             collection = MoneyCollection(**collection_data)
             preview_path = os.path.join(preview_directory, preview_filename)

@@ -60,12 +60,16 @@ class StaffOrganizationRequestUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
+class OrganizationSerializerIds(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = ['organization_id']
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__' 
-    
+
 
 class OrganizationRequestPostSerializer(OrganizationRequestBaseSerializer):
     def validate(self, attrs):

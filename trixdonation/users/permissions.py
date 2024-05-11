@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission
 from organizations.models import OrganizationStaff
+from money_collections.models import MoneyCollection
 
 
 class IsStaffUser(BasePermission):
@@ -16,9 +17,40 @@ class IsOrganizationStaff(BasePermission):
     Custom permission to allow only staff of an organization to perform actions.
     """
 
+    def __init__(self, organization_pk=None):
+        self.organization_pk = organization_pk
+        super().__init__()
+
     def has_permission(self, request, view):
-        # Check if the user is authenticated and a staff member of the organization
-        return request.user.is_authenticated and OrganizationStaff.objects.filter(
-            organization=view.kwargs.get('organization_pk'),
-            user=request.user,
-        ).exists()
+        organization_pk = None
+        money_collection_pk = None
+        if not request.user.is_authenticated:
+            return False
+        
+
+        if 'organization_pk' in view.kwargs:
+            organization_pk = view.kwargs['organization_pk']
+        elif 'money_collection_pk' in view.kwargs:
+            money_collection_pk = view.kwargs['money_collection_pk']
+        
+
+        if organization_pk:
+            return request.user.is_authenticated and OrganizationStaff.objects.filter(
+                organization=organization_pk,
+                user=request.user,
+                ).exists()
+
+        if money_collection_pk:
+            try:
+                money_collection = MoneyCollection.objects.get(pk=money_collection_pk)
+            except MoneyCollection.DoesNotExist:
+                return False
+            
+            organizations = money_collection.organizations.all()
+
+            return any(OrganizationStaff.objects.filter(
+                organization=organization.organization_id,
+                user=request.user,
+                ).exists() for organization in organizations)
+
+        return False

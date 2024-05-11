@@ -1,0 +1,5 @@
+from .money_collection_requisites import MoneyCollectionRequisitesCreateSerializer, MoneyCollectionRequisitesUpdateSerializer
+from .money_collections import MoneyCollectionSerializer, MoneyCollectionPostSerializer, MonoJarSerializer,\
+    MoneyCollectionInfoSerializer, MoneyCollectionUpdateSerializer
+from .bank_cards import BankCardSerializer
+from .other_requisites import OtherRequisiteSerializer

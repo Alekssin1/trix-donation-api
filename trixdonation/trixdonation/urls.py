@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/v1/token/verify/', TokenVerifyView.as_view(),
          name='token_verify'),
     path('organizations/api/', include('organizations.urls')),
+    path('money_collections/api/', include('money_collections.urls')),
     re_path(r'^silk/', include('silk.urls', namespace='silk')),
 ]
 
