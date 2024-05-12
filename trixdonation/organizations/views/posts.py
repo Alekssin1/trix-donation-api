@@ -51,7 +51,6 @@ class PostListView(ListCreateAPIView):
     pagination_class = PostPagination
 
     def get_queryset(self):
-        print(self.kwargs.get('organization_pk'))
         organization_pk = self.kwargs.get('organization_pk')
-        return Post.objects.filter(organization_id=organization_pk)
+        return Post.objects.filter(organization_id=organization_pk).prefetch_related('images', 'videos')
     

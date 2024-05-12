@@ -13,7 +13,12 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from organizations.models.oranizations import Organization
+from users.permissions import IsOrganizationStaff, IsStaffUser
+from organizations.serializers import OrganizationSerializer
+
 from .models import User
+from organizations.models import OrganizationStaff
 from .serializers import UserCreateSerializer, EmailSerializer, \
     PasswordCodeValidateSerializer, UserUpdateSerializer, PasswordSetSerializer, UserGetSerializer
 
@@ -196,3 +201,42 @@ class PasswordSetApiView(APIView):
 
         message = get_errors_as_string(serializer)
         return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+    
+
+class UserStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        organization_id = kwargs.get('organization_pk')
+        if not organization_id:
+            return Response({'is_organization_creator': False, 'is_organization_staff': False, 'is_staff_user': False}, status=status.HTTP_200_OK)
+        
+        user = request.user
+        is_staff_user = IsStaffUser().has_permission(request, self)
+        
+        # Check if the user is the creator of the organization and if the organization is active
+        try:
+            organization = Organization.objects.get(pk=organization_id, created_by=user)
+            is_organization_creator = True
+            is_organization_staff = True
+        except Organization.DoesNotExist:
+            is_organization_creator = False
+            is_organization_staff = IsOrganizationStaff(organization_pk=organization_id).has_permission(request, self)
+        
+        return Response({
+            'is_organization_creator': is_organization_creator,
+            'is_organization_staff': is_organization_staff,
+            'is_staff_user': is_staff_user
+        }, status=status.HTTP_200_OK)
+
+
+class UserOrganizations(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        organizations = Organization.objects.filter(organization_staff__user=user, organization_staff__status=OrganizationStaff.APPROVED)
+        serializer = OrganizationSerializer(organizations, many=True)
+
+
+        return Response(serializer.data)

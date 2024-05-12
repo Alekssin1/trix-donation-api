@@ -3,3 +3,5 @@ from .money_collections import MoneyCollectionSerializer, MoneyCollectionPostSer
     MoneyCollectionInfoSerializer, MoneyCollectionUpdateSerializer
 from .bank_cards import BankCardSerializer
 from .other_requisites import OtherRequisiteSerializer
+from .subscription import MoneyCollectionSubscriptionSerializer
+from .reports import ReportSerializer

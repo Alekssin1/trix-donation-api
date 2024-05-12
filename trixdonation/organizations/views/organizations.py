@@ -296,15 +296,26 @@ class ManageOrganizationStaffView(APIView):
 
 
 class ApproveDeclineOrganizationStaffView(APIView):
-
-    def post(self, request, pk, status):
+    def post(self, request, pk, decision):
         
         try:
             organization_staff = OrganizationStaff.objects.get(pk=pk)
-            organization_staff.status = status
-            organization_staff.save()
 
-        except:
+            if decision == "a":
+                # Delete the user from the staff of their previous organization
+                previous_organization_staff = OrganizationStaff.objects.filter(user=organization_staff.user)
+                if previous_organization_staff.exists():
+                    previous_organization_staff.delete()
+
+            serializer = OrganizationStaffSerializer(instance=organization_staff, data={'status': decision}, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                decision_selected = "прийняли" if decision == "a" else 'відхилили'
+                return Response({'detail': f'Ви {decision_selected} запрошення.', 'result': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except OrganizationStaff.DoesNotExist:
             return Response({'detail': 'Персоналу з таким id не існує в організації.'}, status=status.HTTP_400_BAD_REQUEST)
         
 class OrganizationRetrieveView(RetrieveAPIView):

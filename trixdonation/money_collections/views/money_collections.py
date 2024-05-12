@@ -100,13 +100,16 @@ class MoneyCollectionCreateAPIView(CreateAPIView):
         money_collection = serializer.save()
 
         money_collection_id = money_collection.id
-
+        try:
         # Add the money_collection_id to the request data for MoneyCollectionRequisites
-        requisites_data['money_collection'] = money_collection_id
+            requisites_data['money_collection'] = money_collection_id
 
-        # Create the MoneyCollectionRequisites object with the updated request data
-        requisites_serializer = MoneyCollectionRequisitesCreateSerializer(data=requisites_data)
-        requisites_serializer.is_valid(raise_exception=True)
+            # Create the MoneyCollectionRequisites object with the updated request data
+            requisites_serializer = MoneyCollectionRequisitesCreateSerializer(data=requisites_data)
+            requisites_serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            money_collection.delete()
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         requisites_serializer.money_collection = money_collection
         requisites_serializer.save()
 

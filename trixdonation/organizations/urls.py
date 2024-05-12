@@ -15,7 +15,7 @@ urlpatterns = [
     path(r'organizations/edit/', OrganizationEditView.as_view(), name='organization-edit'),
     path(r'organizations/<int:pk>/staff/', ManageOrganizationStaffView.as_view(), name='manage_organization_staff_action'),
 
-    path(r'organization-staff/<pk>/change-status/<status>/', ApproveDeclineOrganizationStaffView.as_view(),
+    path(r'organization-staff/<pk>/change-status/<decision>/', ApproveDeclineOrganizationStaffView.as_view(),
          name='approve-decline-organization-staff'),
 
     path(r'organizations/<int:organization_pk>/posts/', PostListCreateView.as_view(), name='post-list-create'),

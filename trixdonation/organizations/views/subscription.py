@@ -1,8 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.permissions import IsOrganizationStaff
 from organizations.models import OrganizationSubscription
+from helper.subsription_mixin import SubscriptionMixin
 from organizations.serializers import OrganizationSubscriptionSerializer
 from organizations.serializers import OrganizationSerializer
 from organizations.models import Organization
@@ -17,51 +19,23 @@ from rest_framework.generics import (
     RetrieveAPIView
 )
 
-class OrganizationSubscriptionCreateView(CreateAPIView):
+class SubscribedOrganizationPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+
+class OrganizationSubscriptionCreateView(SubscriptionMixin, CreateAPIView):
     queryset = OrganizationSubscription.objects.all()
     serializer_class = OrganizationSubscriptionSerializer
     permission_classes = [IsAuthenticated]
+    subscription_field = 'organization_id'
+    success_message = 'Підписка на організацію успішно оформлена'
 
-    def create(self, serializer):
 
-        user = self.request.user
-        organization_id = self.request.data.get('organization_id') 
-
-        serializer = OrganizationSubscriptionSerializer(data={
-            'user': user.id, 'organization':organization_id
-        })
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'detail':'Підписка на організацію успішно оформлена'}, status=status.HTTP_201_CREATED)
-        
-    
-        print(serializer.errors)
-
-        return Response({'detail':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
-
-class OrganizationSubscriptionDeleteView(DestroyAPIView):
+class OrganizationSubscriptionDeleteView(SubscriptionMixin, DestroyAPIView):
     queryset = OrganizationSubscription.objects.all()
     permission_classes = [IsAuthenticated]
+    subscription_field = 'organization_id'
 
-    def destroy(self, request, *args, **kwargs):
-        user = self.request.user
-        organization_id = self.request.data.get('organization_id') 
-
-        try:
-            subscription = OrganizationSubscription.objects.get(user=user, organization_id=organization_id)
-        except OrganizationSubscription.DoesNotExist:
-            return Response({"detail": "Ви не були підписані на цього користувача."}, status=status.HTTP_404_NOT_FOUND)
-        
-        # Delete the subscription instance
-        subscription.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
-
-# class OrganizationSubscriptionCountByOrganization(APIView):
-#     def get(self, request, *args, **kwargs):
-#         subscription_counts = OrganizationSubscription.objects.values('organization_id').annotate(count=models.Count('id'))
-#         return Response(subscription_counts)
 
 class OrganizationSubscriptionStatusView(APIView):
     permission_classes = [IsAuthenticated]
@@ -78,6 +52,7 @@ class OrganizationSubscriptionStatusView(APIView):
 class UserSubscribedOrganizationsList(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
+    pagination_class = SubscribedOrganizationPagination
 
     def get_queryset(self):
         user = self.request.user

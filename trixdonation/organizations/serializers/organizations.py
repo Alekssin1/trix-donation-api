@@ -136,6 +136,11 @@ class OrganizationStaffSerializer(serializers.ModelSerializer):
         model = OrganizationStaff
         fields = ["user", "status"]
 
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
+
         
 
 

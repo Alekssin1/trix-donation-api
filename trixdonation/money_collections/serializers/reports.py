@@ -1,24 +1,24 @@
 # serializers.py
 from rest_framework import serializers
-from organizations.models import Post, PostImage, PostVideo
+from money_collections.models import ReportImage, ReportVideo, Report
 
-class PostImageSerializer(serializers.ModelSerializer):
+class ReportImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostImage
+        model = ReportImage
         fields = ('id', 'file')
 
-class PostVideoSerializer(serializers.ModelSerializer):
+class ReportVideoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostVideo
+        model = ReportVideo
         fields = ('id', 'file')
 
-class PostSerializer(serializers.ModelSerializer):
-    images = PostImageSerializer(many=True, required=False)
-    videos = PostVideoSerializer(many=True, required=False)
+class ReportSerializer(serializers.ModelSerializer):
+    images = ReportImageSerializer(many=True, required=False)
+    videos = ReportVideoSerializer(many=True, required=False)
 
     class Meta:
-        model = Post
-        fields = ('name', 'description', 'images', 'videos')
+        model = Report
+        fields = ('name', 'description', 'price', 'images', 'videos')
 
     def create(self, validated_data):
         images_data = self.context.get('request').FILES.getlist('images', [])
@@ -27,27 +27,28 @@ class PostSerializer(serializers.ModelSerializer):
         validated_data.pop('images', None)
         validated_data.pop('videos', None)
         
-        post = Post.objects.create(**validated_data)
+        report = Report.objects.create(**validated_data)
 
         for image_data in images_data:
-            image = PostImage.objects.create(file=image_data)
-            post.images.add(image)
+            image = ReportImage.objects.create(file=image_data)
+            report.images.add(image)
 
         for video_data in videos_data:
-            video = PostVideo.objects.create(file=video_data)
-            post.videos.add(video)
+            video = ReportVideo.objects.create(file=video_data)
+            report.videos.add(video)
 
-        return post
+        return report
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
+        instance.price = validated_data.get('price', instance.price)
         instance.save()
 
         images_data = self.context.get('request').FILES.getlist('images', [])
         videos_data = self.context.get('request').FILES.getlist('videos', [])
         
-        # Remove images and videos from validated_data as they are not fields in the Post model
+        # Remove images and videos from validated_data as they are not fields in the report model
         validated_data.pop('images', None)
         validated_data.pop('videos', None)
 
@@ -56,10 +57,11 @@ class PostSerializer(serializers.ModelSerializer):
         instance.videos.all().delete()
 
         for image_data in images_data:
-            image = PostImage.objects.create(file=image_data)
+            image = ReportImage.objects.create(file=image_data)
             instance.images.add(image)
 
         for video_data in videos_data:
-            video = PostVideo.objects.create(file=video_data)
+            video = ReportVideo.objects.create(file=video_data)
             instance.videos.add(video)
+
         return instance

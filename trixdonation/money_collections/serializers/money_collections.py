@@ -21,7 +21,6 @@ class MoneyCollectionInfoSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         instance = MoneyCollection.objects.select_related('requisites').prefetch_related('organizations').get(pk=instance.pk)
-        print(instance)
         return super().to_representation(instance)
     
 
@@ -74,3 +73,4 @@ class MonoJarSerializer(serializers.Serializer):
                 'Схоже вказане посилання на банку є некоректним. Будь ласка, переконайтесь, що введене посилання правильне.'
             )
         return value
+    

@@ -42,6 +42,7 @@ class MoneyCollectionRequisitesCreateSerializer(MoneyCollectionRequisitesBaseSer
         pass
 
     def validate(self, data):
+        data = super().validate(data)
         errors = []
 
         # Monobank jar link validation
