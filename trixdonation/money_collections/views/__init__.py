@@ -4,3 +4,4 @@ from .other_requisites import OtherRequisitesCreateAPIView, OtherRequisiteRetrie
 from .subscription import MoneyCollectionSubscriptionCreateView, MoneyCollectionSubscriptionDeleteView, MoneyCollectionSubscriptionStatusView, \
     MoneyCollectionOrganizationsList
 from .reports import ReportListCreateView, ReportListView,ReportRetrieveUpdateDestroyView
+from .payment import PaymentView

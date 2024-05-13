@@ -95,10 +95,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('NAME'),
-        'USER': config('USER'),
+        'USER': "postgres",
         'PASSWORD': config('PASSWORD'),
         'HOST': config('HOST'),
-        'PORT': config('PORT'),
+        'PORT': "",
     }
 }
 
@@ -144,8 +144,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/mediafiles/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 BASE_URLS = {
     'development': 'http://127.0.0.1:8000',
     'production': 'http://3.71.89.121',
@@ -224,6 +224,15 @@ CELERY_BROKER_URL = "redis://127.0.0.1:6379"
 CELERY_TIMEZONE = "Europe/Kyiv"
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_BEAT_SCHEDULE = {
+    'update-collected-amount-on-jar': {
+        'task': 'money_collections.tasks.update_collected_amount_on_jar.update_collected_amount_on_jar',
+        'schedule': 300,  # 5 minutes in seconds
+    },
+}
+
+
 
 HOST = "http://127.0.0.1"
 PORT = 8000

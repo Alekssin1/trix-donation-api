@@ -112,7 +112,7 @@ class Command(BaseCommand):
                 report_data = {
                     'money_collection': collection,
                     'name': fake.sentence(),
-                    'price': fake.pydecimal(left_digits=3, right_digits=2),
+                    'price': fake.pydecimal(left_digits=3, right_digits=2, positive=True),
                     'description': fake.paragraph(),
                 }
                 report = Report.objects.create(**report_data)

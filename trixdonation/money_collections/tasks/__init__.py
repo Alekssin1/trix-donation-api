@@ -1,0 +1,1 @@
+from .update_collected_amount_on_jar import update_collected_amount_on_jar

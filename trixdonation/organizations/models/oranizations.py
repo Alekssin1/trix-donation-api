@@ -11,7 +11,6 @@ from django.utils import timezone
 class Organization(models.Model):
     organization_id = models.AutoField(primary_key=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='organizations_creator')
-    # staff = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='organizations')
     money_collections = models.ManyToManyField(MoneyCollection, related_name='organizations', blank=True)
     avatar = models.ImageField(upload_to='organizations-avatars', null=True, blank=True)
     name = models.CharField(max_length=100)

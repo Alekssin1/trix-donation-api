@@ -2,7 +2,7 @@ from django.urls import path
 from .views import MoneyCollectionCreateAPIView, MonoJarDataView, OrganizationsMoneyCollectionListView, MoneyCollectionListView, MoneyCollectionRetrieveUpdateAPIView, BankCardCreateAPIView,\
 BankCardRetrieveUpdateDestroyAPIView, OtherRequisitesCreateAPIView, OtherRequisiteRetrieveUpdateDestroyAPIView, MoneyCollectionSubscriptionCreateView,\
 MoneyCollectionSubscriptionDeleteView, MoneyCollectionSubscriptionStatusView, MoneyCollectionOrganizationsList, ReportListCreateView, \
-ReportRetrieveUpdateDestroyView, ReportListView
+ReportRetrieveUpdateDestroyView, ReportListView, PaymentView
 urlpatterns = [
     path(r'organizations/<int:organization_pk>/money_collections/', MoneyCollectionCreateAPIView.as_view(), name='money_collection_create'),
     path(r'jar/', MonoJarDataView.as_view(), name='mono_jar_info'),
@@ -23,4 +23,5 @@ urlpatterns = [
     path(r'collections/<int:money_collection_pk>/subscription-status/', MoneyCollectionSubscriptionStatusView.as_view(), name='money_collection-subscription-status'),
     path(r'user/subscribed-collections/', MoneyCollectionOrganizationsList.as_view(), name='user-subscribed-collections-list'),
 
+    path(r'<int:money_collection_id>/payment', PaymentView.as_view(), name='send_donate')
 ] 
