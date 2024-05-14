@@ -228,7 +228,8 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     'update-collected-amount-on-jar': {
         'task': 'money_collections.tasks.update_collected_amount_on_jar.update_collected_amount_on_jar',
-        'schedule': 300,  # 5 minutes in seconds
+        'schedule': 300,  # 15 minutes in seconds
+        # 'schedule': 900,
     },
 }
 

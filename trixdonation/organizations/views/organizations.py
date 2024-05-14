@@ -112,9 +112,10 @@ class OrganizationRequestRetrieveUpdateView(RetrieveUpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial, context=serializer_context)
         serializer.is_valid(raise_exception=True)
         egrpou_code = serializer.validated_data.get('EGRPOU_code')
-        valid, detail = validate_egrpou(egrpou_code)
-        if not valid:
-            return Response({"detail": detail}, status=status.HTTP_400_BAD_REQUEST)
+        if egrpou_code:
+            valid, detail = validate_egrpou(egrpou_code)
+            if not valid:
+                return Response({"detail": detail}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_update(serializer)
 
         # Bulk update organization requests
